@@ -76,7 +76,7 @@ See [`LICENSES.md`](LICENSES.md) for third-party materials.
 | --- | --- | --- | --- |
 | Nahid Ibn Zaman | `nahidzaman1996271-sketch` | <TO BE FILLED BY TEAM> | <File, feature or commit> |
 | Farhan Ishraq Ifti | `252-35-648-ops` | <TO BE FILLED BY TEAM> | <File, feature or commit> |
-| Tahmid Hossain Pranjol | `Tahmid-442` | <TO BE FILLED BY TEAM> | <File, feature or commit> |
+| Tahmid Rashid Pranjol | `Tahmid-442` | <TO BE FILLED BY TEAM> | <File, feature or commit> |
 | Mahmuda Khanum | `252-35-537-del` | <TO BE FILLED BY TEAM> | <File, feature or commit> |
 
 Commit count alone does not represent contribution.
