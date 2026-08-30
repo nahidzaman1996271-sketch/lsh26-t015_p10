@@ -74,10 +74,10 @@ See [`LICENSES.md`](LICENSES.md) for third-party materials.
 
 | Registered member | GitHub username | Major contribution | Evidence |
 | --- | --- | --- | --- |
-| Nahid Ibn Zaman | `nahidzaman1996271-sketch` | <TO BE FILLED BY TEAM> |35460da2f58a26862dd222c072c7212bb6578312 |
-| Farhan Ishraq Ifti | `252-35-648-ops` | <TO BE FILLED BY TEAM> | <File, feature or commit> |
-| Tahmid Rashid Pranjol | `Tahmid-442` | <TO BE FILLED BY TEAM> | <File, feature or commit> |
-| Mahmuda Khanum | `252-35-537-del` | <TO BE FILLED BY TEAM> | <File, feature or commit> |
+| Nahid Ibn Zaman | `nahidzaman1996271-sketch` | Repository structure, GitHub Pages deployment, and submission logistics |35460da2f58a26862dd222c072c7212bb6578312 |
+| Farhan Ishraq Ifti | `252-35-648-ops` | Documentation and evidence — wrote `EVENT.md`, `README.md`, `LICENSES.md`, and `evaluation-manifest.json` | `d067c74`, `9f50d6f`, `98a898e`, `5306979`, `6d1d526`, `9257fb3` |
+| Tahmid Rashid Pranjol | `Tahmid-442` | QA — tested all four required hard-edge cases against the live app, cross-checked checking lists and trace output against the fixture data, and verified the requirement-by-requirement proof | `README.md` (proof table), `smoke_test.js` |
+| Mahmuda Khanum | `252-35-537-del` | The grading engine and report UI — designed and implemented the core logic, prompted, reviewed, and iterated with Claude, and verified generated code against the brief's rules | `engine.js`, `app.js`, `data.js` |
 
 Commit count alone does not represent contribution.
 
