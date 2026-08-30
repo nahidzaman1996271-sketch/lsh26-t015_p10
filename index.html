@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prepaid Meter Recharge Advisor — LSH26-T015 · P10</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="meter-hero">
+  <div class="wrap">
+    <div class="hero-top">
+      <div>
+        <div class="brand">meter<span>ledger</span></div>
+        <div class="brand-meta">Prepaid Meter Recharge Advisor · LSH26-T015 · P10</div>
+      </div>
+      <div class="case-picker">
+        <label for="case-select">Household case</label>
+        <select id="case-select"></select>
+      </div>
+    </div>
+
+    <div class="meter-face">
+      <div>
+        <div class="readout-label">Balance as of today · case <span id="case-id-badge">PUB-01</span></div>
+        <div class="readout-digits" id="readout-balance">৳0.00</div>
+        <div class="readout-sub" id="readout-sub"></div>
+      </div>
+      <div class="face-stats">
+        <div class="face-stat"><div class="k">Opening balance</div><div class="v" id="stat-opening">—</div></div>
+        <div class="face-stat"><div class="k">Usual daily use</div><div class="v" id="stat-usual">—</div></div>
+        <div class="face-stat"><div class="k">Family's target date</div><div class="v" id="stat-target">—</div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- 1: household data -->
+  <section class="block" id="sec-household">
+    <div class="eyebrow"><span class="num">01</span><h2 class="section-title">Six months on the meter</h2></div>
+    <p class="section-sub">Daily unit readings and every recharge for this household, covering a light month, a heavy summer month, and a month closed out with a large last-week top-up.</p>
+    <div class="callout-row">
+      <div class="callout" id="callout-light"></div>
+      <div class="callout heavy" id="callout-heavy"></div>
+      <div class="callout recharge" id="callout-recharge"></div>
+    </div>
+  </section>
+
+  <!-- 2: ledger -->
+  <section class="block" id="sec-ledger">
+    <div class="eyebrow"><span class="num">02</span><h2 class="section-title">Balance, rebuilt day by day</h2></div>
+    <p class="section-sub">Each day's units are billed at the slab the month's running total reaches; the demand charge and meter rent land only on the first recharge of a calendar month, with 5% VAT on the energy amount. Amber markers on the line are recharges.</p>
+
+    <div class="chart-card">
+      <canvas id="balance-chart" style="width:100%; display:block;"></canvas>
+      <div class="chart-legend">
+        <span><span class="legend-dot" style="background:#3f7a53"></span>Balance</span>
+        <span><span class="legend-dot" style="background:#d98a3d"></span>Recharge (marker size ≈ amount)</span>
+      </div>
+    </div>
+
+    <div class="table-scroll">
+      <table class="ledger">
+        <thead>
+          <tr>
+            <th>Date</th><th>Units</th><th>Month cum.</th><th>Slab rate</th>
+            <th>Energy</th><th>VAT</th><th>Fixed</th><th>Recharge</th><th>Balance</th>
+          </tr>
+        </thead>
+        <tbody id="ledger-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 3: ask the meter -->
+  <section class="block" id="sec-ask">
+    <div class="eyebrow"><span class="num">03</span><h2 class="section-title">Ask the meter</h2></div>
+    <p class="section-sub">Two questions the family actually asks: when does the money run out at the usual pace, and what does today's top-up need to cover to reach a date they choose.</p>
+
+    <div class="ask-grid">
+      <div class="ask-card">
+        <h3>When does the balance run out?</h3>
+        <div class="q">At today's balance and the usual daily use, with no further recharges.</div>
+        <div class="big-answer warn" id="runout-answer">—</div>
+        <div class="answer-note" id="runout-note"></div>
+      </div>
+
+      <div class="ask-card">
+        <h3>How much to recharge today?</h3>
+        <div class="q">To make the balance last until a date you choose.</div>
+        <div class="field-row">
+          <label for="target-date-input">Last until</label>
+          <input type="date" id="target-date-input">
+          <button class="btn" id="recalc-btn">Recalculate</button>
+        </div>
+        <div class="big-answer" id="recharge-answer">—</div>
+        <div class="answer-note" id="recharge-note"></div>
+        <div class="breakdown" id="recharge-breakdown"></div>
+        <div class="answer-note" id="recharge-fixed-note" style="margin-top:8px"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4: habit comparison -->
+  <section class="block" id="sec-compare">
+    <div class="eyebrow"><span class="num">04</span><h2 class="section-title">Two recharge habits, same consumption</h2></div>
+    <p class="section-sub">Over <span id="compare-months">—</span>, same daily units, same calendar-month slab counter either way. Recharge timing can only move the demand-charge + meter-rent count — never the energy rate.</p>
+
+    <div class="compare-grid">
+      <div class="habit-card" id="habit-low"></div>
+      <div class="habit-card" id="habit-monthly"></div>
+    </div>
+
+    <div class="verdict" id="compare-verdict"></div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">Tariff: 1–75 @ 4.63 · 76–200 @ 5.26 · 201–300 @ 5.63 · 301–400 @ 5.83 · 401–600 @ 9.30 · 601+ @ 10.70 — taka/unit · demand charge 42 + meter rent 40 once per month on first recharge · VAT 5% of energy · slab counter resets on the 1st, recharge never resets it.</div>
+</footer>
+
+<script src="engine.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

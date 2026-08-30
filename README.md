@@ -7,135 +7,94 @@ Solution for **LofiStack Hackathon 2026 — P10**
 - **Team:** `Candy Crush`
 - **Team ID:** `LSH26-T015`
 - **Problem:** `P10 — Prepaid Meter Recharge Advisor`
-- **Live application:** <ADD LIVE URL BEFORE SUBMISSION>
+- **Live application:** <ADD LIVE URL HERE BEFORE SUBMISSION>
 
 > Judges will evaluate only the exact commit SHA entered in the Final Submission Form.
 
 ## Solution summary
 
-The application rebuilds a prepaid electricity meter's balance day by day from raw unit
-readings and a recharge history, correctly applying monthly slab pricing, VAT, and the
-once-a-month demand charge and meter rent. It then answers the two questions a family
-actually asks a meter for — when will the balance run out, and how much to recharge today
-to last until a chosen date, broken down into energy, the higher-slab surcharge, fixed
-charges and VAT — and compares two recharge habits (topping up when low vs. topping up
-every month) over the same consumption to show which one costs less and by how much.
+A household-facing tool that rebuilds a prepaid electricity meter's balance day by day from six months of unit readings and recharge history, then answers the two questions a family actually asks: when will the balance run out at the usual daily use, and how much needs to be recharged today to last until a chosen date. It also compares two recharge habits — topping up big whenever the balance runs low versus recharging a fixed amount on the 1st of every month — over the same three months of consumption, so a family can see which habit actually costs less and why.
 
 ## Requirements
 
-| Requirement                                                                          | Status   | Where to verify                                    |
-| ------------------------------------------------------------------------------------- | -------- | --------------------------------------------------- |
-| R1 — Household with 6+ months of daily readings and recharge history                  | Complete | `household_PUB-01.json`                              |
-| R2 — Day-by-day balance rebuild with slab pricing, VAT, fixed charges, recharges shown | Complete | `tariff_engine.rebuild_ledger`, `PUB-01_balance_ledger.csv`, `PUB-01_balance_chart.png` |
-| R3 — Run-out date and recharge-to-target amount with breakdown                        | Complete | `tariff_engine.project_runout_date`, `tariff_engine.recharge_needed`, `PUB-01_full_results.json` |
-| R4 — Low-balance vs. monthly recharge habit comparison over 3 months                  | Complete | `tariff_engine.simulate_habit`, `PUB-01_full_results.json` |
+| Requirement | Status | Where to verify |
+| --- | --- | --- |
+| R1 — Household with 6+ months of daily readings and recharge history, including a light month, a heavy summer month and a large last-week recharge | Complete | Section `01 — Six months on the meter`; data sourced from the organizer's public fixture (`data.js`), selectable via the case dropdown in the header |
+| R2 — Day-by-day balance rebuild under the tariff (slab priced on running total, demand charge + meter rent on first recharge of the month, VAT on energy, balance line with every recharge marked) | Complete | Section `02 — Balance, rebuilt day by day`; logic in `engine.js` → `buildLedger()` |
+| R3 — Answer run-out date and required recharge (broken into energy, higher-slab uplift, fixed charges, VAT) for a user-chosen target date | Complete | Section `03 — Ask the meter`; logic in `engine.js` → `projectRunOutDate()` and `requiredRecharge()` |
+| R4 — Compare low-balance vs. monthly recharge habits over the same 3 months and consumption, showing which costs less and by how much | Complete | Section `04 — Two recharge habits, same consumption`; logic in `engine.js` → `compareHabits()` |
 
 ## How to test the application
 
-1. Open the live application (or run `run_demo.py` locally — see below).
-2. Load the bundled household `household_PUB-01.json` (loaded automatically by `run_demo.py`).
-3. Review the printed balance ledger and the generated `PUB-01_balance_chart.png` — every
-   recharge is marked on the balance line with its amount.
-4. Review the printed answers to the run-out date, the recharge-to-target breakdown, and the
-   3-month habit comparison at the end of the run.
+1. Open the live application (or `merged.html` locally).
+2. Use the **Household case** dropdown in the header to switch between the 25 published fixture households (defaults to `PUB-01`).
+3. Scroll through sections 01–04 in order: household overview, the day-by-day ledger with its balance chart, the two "ask the meter" calculators (pick any date in the **Last until** field and press **Recalculate**), and the habit comparison for the case's three comparison months.
+4. Expected result: every figure updates consistently for the selected case, the four recharge-breakdown numbers always sum to the "recharge today" figure shown, and the comparison verdict states plainly whether the two habits tied or which one was cheaper and by how much.
 
 ### Test or sample data
 
-The published fixture is `household_PUB-01.json`, bundled in the repository. It contains six
-months of daily unit readings (2026-01-01 to 2026-06-30) and 18 recharges, including a light
-month (January), a heavy summer month (May), and a large last-week-of-the-month recharge
-(June 25 and June 29). Re-running `run_demo.py` always starts fresh from this file and never
-mutates it, so no reset step is required.
+The organizer's published P10 fixture (all 25 cases) is embedded directly in `data.js` — nothing is synthesized. Switching the case dropdown reloads all four sections from that case's own `days`, `recharges`, `today`, `usual_daily_units`, `target_date` and `comparison` fields. There is no data-entry or save state to reset: the app is stateless and always recomputes straight from the fixture, so simply reselecting a case (or reloading the page) restores the initial view.
 
 ## Run locally
 
 ### Requirements
 
-- Python 3.10+
-- No database required (the household is a flat JSON fixture)
-- `matplotlib` (for the balance chart)
+- Any modern web browser (no build step, no runtime install)
+- Optional: Python 3 or Node.js, only if you'd rather serve the folder than open the file directly
 
 ### Setup
 
 ```bash
 git clone <PUBLIC-REPOSITORY-URL>
 cd lsh26-t015-p10
-pip install matplotlib
-python run_demo.py
+# no install step — open index.html directly, or serve the folder:
+python3 -m http.server 8000
+# then open http://localhost:8000/index.html
 ```
 
-Do not include real passwords, tokens or API keys. List only variable names in `.env.example`.
+`merged.html` is a single self-contained file with the same app inlined; it can be opened directly with no server at all.
 
 ## Problem-solving approach
 
-- The team read the tariff and the four required items and modelled the meter as a strict
-  day-by-day ledger: every day deducts that day's units at the slab the **month's cumulative
-  total reaches after** that day, plus 5% VAT on the energy amount; a recharge adds money and,
-  only if it is the first recharge seen in that calendar month, also deducts the 42 BDT demand
-  charge and 40 BDT meter rent.
-- For "how much to recharge today", the team decomposed the future cost into a flat baseline
-  (all units priced at the lowest slab) plus a separate "higher slab" surcharge, so the family
-  can see exactly how much of the bill is caused by heavy usage pushing them into a higher slab.
-- The most important design decision was keeping the habit comparison (R4) honest: both habits
-  run the identical daily consumption and slab counter, so energy and VAT must come out equal
-  by construction — the team added an automated check for this invariant.
-- The solution was tested by hand-checking individual ledger rows against the tariff by hand
-  (e.g. verifying the exact day the fixed charge is applied), and by running the habit
-  comparison across all 25 published sample households to confirm every resulting cost
-  difference is an exact multiple of 82.00 BDT (one demand charge + one meter rent) — never a
-  fabricated slab-timing saving.
+The brief centers on one tariff rule that's easy to get subtly wrong: units are priced by the slab the *month's running total* reaches, not per-unit, and demand charge/meter rent are tied to a *recharge event*, not to the calendar date. We treated `engine.js` as the single source of truth for that rule and built everything else (chart, ledger table, calculators, comparison) as pure views over its output, so every number on screen traces back to one deterministic function. The most important decision was keeping the two recharge-habit simulations built on identical daily consumption and an identical calendar-month slab counter, so any cost gap between them could only come from how many months triggered a first-recharge fixed charge — never from a fabricated energy-rate saving. The engine was verified by porting it in parallel to a Python reference implementation, cross-checking every figure (ledger balances, run-out date, recharge breakdown, habit comparison) against it, then smoke-testing the full rendered app against all 25 fixture cases to confirm no runtime errors and at least one genuine tie and one genuine cost gap actually occur across the set.
 
 ## Technology used
 
-- **Frontend:** Not yet implemented (CLI/script output for this submission)
-- **Backend:** Python (standard library + `matplotlib` for charting)
-- **Database:** None — household data is a flat JSON fixture
-- **Deployment:** Not yet deployed
-- **Other material tools:** `matplotlib` for the balance chart
+- **Frontend:** Vanilla JavaScript, HTML5 Canvas (balance charts), CSS3 (Google Fonts: Fraunces, Inter, Space Mono)
+- **Backend:** None — fully client-side, static app
+- **Database:** None — organizer fixture embedded as JSON in `data.js`
+- **Deployment:** <ADD DEPLOYMENT PROVIDER HERE>
+- **Other material tools:** Node.js + jsdom (used only for local testing during development; not shipped in the app)
 
 See [`LICENSES.md`](LICENSES.md) for third-party materials.
 
 ## Team contributions
 
-| Registered member       | GitHub username                | Major contribution | Evidence                |
-| ------------------------ | ------------------------------- | ------------------- | ------------------------ |
-| Nahid Ibn Zaman           | `nahidzaman1996271-sketch`      | <Contribution>       | File, feature or commit |
-| Farhan Ishraq Ifti        | `252-35-648-ops`                | <Contribution>       | File, feature or commit |
-| Tahmid Hossain Pranjol    | `Tahmid-442`                    | <Contribution>       | File, feature or commit |
-| Mahmuda Khanum            | `252-35-537-del`                | <Contribution>       | File, feature or commit |
+| Registered member | GitHub username | Major contribution | Evidence |
+| --- | --- | --- | --- |
+| Nahid Ibn Zaman | `nahidzaman1996271-sketch` | <TO BE FILLED BY TEAM> | <File, feature or commit> |
+| Farhan Ishraq Ifti | `252-35-648-ops` | <TO BE FILLED BY TEAM> | <File, feature or commit> |
+| Tahmid Hossain Pranjol | `Tahmid-442` | <TO BE FILLED BY TEAM> | <File, feature or commit> |
+| Mahmuda Khanum | `252-35-537-del` | <TO BE FILLED BY TEAM> | <File, feature or commit> |
 
 Commit count alone does not represent contribution.
 
 ## AI usage
 
-- **Claude (Anthropic):** Used to design and implement the tariff/billing engine
-  (`tariff_engine.py`), the day-by-day ledger rebuild, the run-out-date and recharge-breakdown
-  calculators, the habit-comparison simulator, the balance chart, and this documentation set.
-  Output was verified by hand-checking individual ledger rows against the stated tariff (e.g.
-  confirming the 82 BDT fixed charge lands only on the first recharge of a month), and by
-  running the habit comparison across all 25 published sample households to confirm every cost
-  difference is an exact multiple of 82.00 BDT, matching the clarification that timing cannot
-  create a fabricated slab saving.
+- **Tool:** Claude (Anthropic, Sonnet model), via claude.ai — assisted with writing `engine.js` (tariff/ledger logic), `app.js` (UI rendering), `styles.css`, and the initial project scaffolding for `index.html`.
+- **Verification:** The JavaScript engine was ported in parallel to an independent Python reference implementation; every calculation (day-by-day ledger, run-out projection, required-recharge breakdown, habit comparison) was cross-checked figure-for-figure against it. The rendered app was then smoke-tested against all 25 cases in the organizer fixture using a headless DOM (jsdom) to confirm no runtime errors and that both a genuine tie and a genuine cost difference occur in the habit comparison across the case set, ruling out a hard-coded or trivially-always-equal result.
 
 ## Major design decisions
 
-- **Decision:** Charge each day's units in full at the single slab the month's cumulative total
-  reaches after that day (no splitting one day's units across two slabs) — chosen for a
-  deterministic, auditable ledger that matches the plain reading of the problem statement.
-- **Decision:** Apply the 42 BDT demand charge and 40 BDT meter rent strictly on the first
-  recharge event of each calendar month (not on a fixed calendar date) — this is required by
-  the problem statement and is also what makes the habit comparison in R4 meaningful.
-- **Decision:** Break the "how much to recharge" answer into a flat baseline energy cost plus a
-  separate higher-slab surcharge, so the family can see how much of their bill is caused by
-  heavy usage rather than just the flat rate.
+- **Decision:** Demand charge + meter rent are deducted only when a recharge actually happens to be the first one of that calendar month, not automatically when the month begins — because the brief specifies the charge is "taken on the first recharge of each month," and this is what makes the habit comparison in R4 meaningful rather than automatic.
+- **Decision:** Each day's units are priced entirely at the slab the month's *ending* running total reaches for that day (not split across slab boundaries within a day) — the simplest reading of "charge each day's units at the slab the month's running total has reached" that keeps the slab counter identical regardless of recharge timing, per the brief's own clarification.
+- **Decision:** When a user's chosen target date needs less money than the tariff cost for that period because a balance already sits on the meter, that existing balance is netted off proportionally across all four cost categories, so the four displayed components (energy, slab uplift, fixed charges, VAT) always sum exactly to the "recharge today" figure asked for in R3.
 
 ## Known limitations
 
-- No live web frontend yet — the current submission demonstrates all four requirements via a
-  Python script (`run_demo.py`) against the bundled household fixture.
-- Only one household (`PUB-01`) is bundled and demonstrated end-to-end, though the engine has
-  been validated against all 25 published sample households for the habit-comparison invariant.
-- No deployment or persistence layer yet.
+- No live deployment URL has been added yet — update the **Live application** field above before submission.
+- The comparison in section 04 uses the case's own actual daily readings for its three comparison months (`comparison.source: "readings"`); it does not yet support a manually supplied flat daily-units figure for that section.
+- Team contribution evidence (file/feature/commit references) has not been filled in yet — see the table above.
 
 ## Repository records
 
