@@ -74,7 +74,7 @@ See [`LICENSES.md`](LICENSES.md) for third-party materials.
 
 | Registered member | GitHub username | Major contribution | Evidence |
 | --- | --- | --- | --- |
-| Nahid Ibn Zaman | `nahidzaman1996271-sketch` | <TO BE FILLED BY TEAM> | <File, feature or commit> |
+| Nahid Ibn Zaman | `nahidzaman1996271-sketch` | <TO BE FILLED BY TEAM> |35460da2f58a26862dd222c072c7212bb6578312 |
 | Farhan Ishraq Ifti | `252-35-648-ops` | <TO BE FILLED BY TEAM> | <File, feature or commit> |
 | Tahmid Rashid Pranjol | `Tahmid-442` | <TO BE FILLED BY TEAM> | <File, feature or commit> |
 | Mahmuda Khanum | `252-35-537-del` | <TO BE FILLED BY TEAM> | <File, feature or commit> |
