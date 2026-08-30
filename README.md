@@ -7,7 +7,7 @@ Solution for **LofiStack Hackathon 2026 — P10**
 - **Team:** `Candy Crush`
 - **Team ID:** `LSH26-T015`
 - **Problem:** `P10 — Prepaid Meter Recharge Advisor`
-- **Live application:** <ADD LIVE URL HERE BEFORE SUBMISSION>
+- **Live application:** https://nahidzaman1996271-sketch.github.io/lsh26-t015_p10/?fbclid=IwY2xjawUBK1BwZG9mBWV4dG4DYWVtAjEwAGJyaWQRMUFUaUJqODZZSHVSWEd2bk5zcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEebBwC-cW_Deh3MUDMCsjhK3ObUgf6bdTHVF0lcPA1UuObZFbbxd6AEB8d3FI_aem_lgaO73IruBvNub9rggOiQQ
 
 > Judges will evaluate only the exact commit SHA entered in the Final Submission Form.
 
