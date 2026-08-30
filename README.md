@@ -65,7 +65,7 @@ The brief centers on one tariff rule that's easy to get subtly wrong: units are 
 - **Frontend:** Vanilla JavaScript, HTML5 Canvas (balance charts), CSS3 (Google Fonts: Fraunces, Inter, Space Mono)
 - **Backend:** None — fully client-side, static app
 - **Database:** None — organizer fixture embedded as JSON in `data.js`
-- **Deployment:** <ADD DEPLOYMENT PROVIDER HERE>
+- **Deployment:** <render.com>
 - **Other material tools:** Node.js + jsdom (used only for local testing during development; not shipped in the app)
 
 See [`LICENSES.md`](LICENSES.md) for third-party materials.
