@@ -45,7 +45,7 @@ The organizer's published P10 fixture (all 25 cases) is embedded directly in `da
 ### Setup
 
 ```bash
-git clone <PUBLIC-REPOSITORY-URL>
+git clone <https://github.com/nahidzaman1996271-sketch/lsh26-t015_p10>
 cd lsh26-t015-p10
 # no install step — open index.html directly, or serve the folder:
 python3 -m http.server 8000
